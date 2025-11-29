@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systemischer Adventskalender mit 25 Türchen</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --forest-green: #2d5016;
+    --sage-green: #5a7153;
+    --mint-green: #8b9d83;
+    --deep-red: #8b2e2e;
+    --warm-red: #a64545;
+    --gold: #c9a961;
+    --cream: #f4f1e8;
+    --dark-text: #2c3e20;
+    --light-text: #f4f1e8;
+}
+
+body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: linear-gradient(135deg, var(--forest-green) 0%, var(--sage-green) 100%);
+    min-height: 100vh;
+    color: var(--dark-text);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--light-text);
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    font-size: 1rem;
+    font-weight: 300;
+    font-style: italic;
+    opacity: 0.9;
+    margin-bottom: 15px;
+}
+
+/* Adventskalender Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    background: rgba(139, 46, 46, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    margin-bottom: 40px;
+}
+
+/* Türchen als Schubladen-Kästchen */
+.door {
+    aspect-ratio: 1;
+    background: linear-gradient(145deg, var(--deep-red), var(--warm-red));
+    border: 3px solid var(--gold);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 
+        inset 0 2px 5px rgba(255,255,255,0.2),
+        0 4px 8px rgba(0,0,0,0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    overflow: hidden;
+}
+
+.door::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%);
+    pointer-events: none;
+}
+
+.door:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 
+        inset 0 2px 5px rgba(255,255,255,0.3),
+        0 8px 20px rgba(0,0,0,0.4);
+    border-color: var(--cream);
+}
+
+.door.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+}
+
+.door.locked:hover {
+    transform: none;
+    box-shadow: 
+        inset 0 2px 5px rgba(255,255,255,0.2),
+        0 4px 8px rgba(0,0,0,0.3);
+    border-color: var(--gold);
+}
+
+.door.opened {
+    background: linear-gradient(145deg, var(--sage-green), var(--mint-green));
+    border-color: var(--gold);
+}
+
+.door.special {
+    background: linear-gradient(145deg, var(--gold), var(--warm-red));
+    box-shadow: 
+        inset 0 2px 5px rgba(255,255,255,0.3),
+        0 4px 8px rgba(0,0,0,0.3),
+        0 0 20px rgba(201, 169, 97, 0.4);
+}
+
+.door.special:hover {
+    box-shadow: 
+        inset 0 2px 5px rgba(255,255,255,0.4),
+        0 8px 20px rgba(0,0,0,0.4),
+        0 0 30px rgba(201, 169, 97, 0.6);
+}
+
+.door.special.opened {
+    background: linear-gradient(145deg, var(--mint-green), var(--sage-green));
+}
+
+/* Türchen-Nummer */
+.door-number {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: var(--cream);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    z-index: 1;
+    font-family: 'Georgia', serif;
+}
+
+.door.opened .door-number {
+    color: var(--gold);
+}
+
+.door-date {
+    font-size: 0.7rem;
+    color: rgba(244, 241, 232, 0.8);
+    text-align: center;
+    z-index: 1;
+    margin-top: -5px;
+}
+
+.door.opened .door-date {
+    color: var(--cream);
+}
+
+.door-title {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+    font-size: 0.65rem;
+    color: var(--cream);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1;
+    line-height: 1.2;
+    font-weight: 600;
+}
+
+.door:hover .door-title {
+    opacity: 1;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(45, 80, 22, 0.95);
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: var(--cream);
+    margin: 3% auto;
+    padding: 40px;
+    border: 3px solid var(--gold);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: slideIn 0.4s;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    color: var(--deep-red);
+    float: right;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+}
+
+.close:hover {
+    color: var(--warm-red);
+}
+
+#modalBody {
+    margin-top: 20px;
+    color: var(--dark-text);
+}
+
+#modalBody h3 {
+    color: var(--deep-red);
+    font-size: 1.5rem;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+#modalBody .week-title {
+    color: var(--sage-green);
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(139, 157, 131, 0.1);
+    border-left: 4px solid var(--sage-green);
+}
+
+#modalBody blockquote {
+    border-left: 4px solid var(--gold);
+    padding-left: 20px;
+    margin: 20px 0;
+    font-style: italic;
+    color: var(--sage-green);
+    background: rgba(201, 169, 97, 0.05);
+    padding: 15px 20px;
+    border-radius: 4px;
+}
+
+#modalBody .impuls {
+    background: rgba(90, 113, 83, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+#modalBody .question {
+    background: rgba(139, 46, 46, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: 500;
+}
+
+#modalBody p {
+    margin-bottom: 15px;
+}
+
+#modalBody strong {
+    color: var(--deep-red);
+}
+
+#modalBody ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+#modalBody ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    list-style-type: disc;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .calendar-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 15px;
+    }
+    
+    .door-number {
+        font-size: 2rem;
+    }
+    
+    .door-title {
+        font-size: 0.55rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 25px;
+        margin: 5% auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: var(--cream);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--sage-green);
+    border-radius: 5px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Systemischer Adventskalender mit 25 Türchen</h1>
+        </header>
+
+        <main class="calendar-grid" id="calendarGrid">
+            <!-- Türchen werden hier generiert -->
+        </main>
+
+        <footer>
+            <p>© 2024 Systemischer Adventskalender</p>
+        </footer>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+const calendarContent = [
+    {
+        day: 1,
+        date: "30. Nov",
+        title: "Neubeginn",
+        special: true,
+        actualDate: new Date(2024, 10, 30),
+        content: `
+            <div class="week-title">Woche 1: AUTOPOIESIS – Selbstorganisation und Selbsterschaffung</div>
+            <h3>30. November - Erster Advent: Neubeginn</h3>
+            <h3>"Der Anfang liegt in dir"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Systeme erschaffen sich selbst aus sich heraus. Wie ein Fest, das nicht von außen beginnt, sondern in der Gemeinschaft entsteht, die es feiert.</div>
+            <blockquote>"Ein System kann nur das erzeugen, was in seinen Möglichkeiten liegt - aber diese Möglichkeiten sind unendlich." (Humberto Maturana)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welches "System" in deinem Leben organisiert sich gerade neu? Wo bist du gleichzeitig Schöpfer*in und Geschöpf?</div>
+        `
+    },
+    {
+        day: 2,
+        date: "1. Dez",
+        title: "Referenzsystem",
+        actualDate: new Date(2024, 11, 1),
+        content: `
+            <h3>1. Dezember</h3>
+            <h3>Das eigene Referenzsystem</h3>
+            <blockquote>"Wir sehen die Welt nicht, wie sie ist, sondern wie wir sind." (Anaïs Nin)</blockquote>
+            <div class="impuls"><strong>Impuls:</strong> Dein Referenzsystem ist wie eine innere Landkarte - selbstgezeichnet, ständig aktualisiert, einzigartig. Es organisiert sich durch jede Erfahrung neu.</div>
+            <div class="question"><strong>Frage:</strong> Welche "Legende" steht auf deiner inneren Landkarte? Was bedeuten die Symbole, die du verwendest?</div>
+        `
+    },
+    {
+        day: 3,
+        date: "2. Dez",
+        title: "Glaubenssätze",
+        actualDate: new Date(2024, 11, 2),
+        content: `
+            <h3>2. Dezember</h3>
+            <h3>Glaubenssätze als lebendige Systeme - "Die unsichtbaren Regisseure"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Glaubenssätze sind wie Programme, die im Hintergrund laufen. Sie sind nicht wahr oder falsch - sie sind funktional oder dysfunktional für dein aktuelles Leben. "Ich bin nicht gut genug" ist kein Fakt, sondern ein autopoietisches Programm, das sich selbst bestätigt und erhält.</div>
+            <blockquote>"Achte auf deine Gedanken, denn sie werden zu Worten. Achte auf deine Worte, denn sie werden zu Handlungen." (Talmud)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welcher Glaubenssatz hat sich überlebt und darf heute in den Ruhestand gehen? Was wäre möglich, wenn du ihn loslassen würdest?</div>
+        `
+    },
+    {
+        day: 4,
+        date: "3. Dez",
+        title: "Perspektivwechsel",
+        actualDate: new Date(2024, 11, 3),
+        content: `
+            <h3>3. Dezember</h3>
+            <h3>Perspektivwechsel - "Die Kunst des Umkreisens"</h3>
+            <div class="impuls"><strong>Impuls:</strong> In der Systemik gibt es keine objektive Wahrheit - nur verschiedene Perspektiven. Jede Perspektive ist eine neue Wirklichkeit.</div>
+            <blockquote>"Die Landkarte ist nicht das Gebiet." (Alfred Korzybski)</blockquote>
+            <div class="question"><strong>Übung:</strong> Betrachte eine Situation heute aus drei Perspektiven:
+            <ol>
+                <li>Aus deiner eigenen</li>
+                <li>Aus der eines Beteiligten</li>
+                <li>Aus der eines wohlwollenden Beobachters</li>
+            </ol>
+            Was verändert sich?</div>
+        `
+    },
+    {
+        day: 5,
+        date: "4. Dez",
+        title: "Der gute Grund",
+        actualDate: new Date(2024, 11, 4),
+        content: `
+            <h3>4. Dezember</h3>
+            <h3>Der gute Grund - "Alles macht Sinn im jeweiligen Kontext"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Hinter jedem Verhalten steckt ein guter Grund - auch wenn er auf den ersten Blick nicht sichtbar ist. Symptome sind Lösungsversuche des Systems.</div>
+            <blockquote>"Verstehen heißt nicht einverstanden sein, sondern den Sinn im scheinbar Sinnlosen erkennen." (Viktor Frankl)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welches deiner Verhaltensweisen irritiert dich selbst? Wofür könnte es - in einem früheren Kontext - die perfekte Lösung gewesen sein?</div>
+        `
+    },
+    {
+        day: 6,
+        date: "5. Dez",
+        title: "Ressourcen",
+        actualDate: new Date(2024, 11, 5),
+        content: `
+            <h3>5. Dezember</h3>
+            <h3>Ressourcen: Die Selbstversorgung des Systems</h3>
+            <div class="impuls"><strong>Impuls:</strong> Autopoietische Systeme erzeugen ihre wichtigsten Ressourcen selbst - aus dem, was bereits da ist. Das Paradox: Wir werden reich beschenkt, indem wir entdecken, was wir schon haben.</div>
+            <blockquote>"Du bist reicher, als du denkst - du hast nur vergessen, wo du deine Schätze vergraben hast." (Rumi)</blockquote>
+            <div class="question"><strong>Frage:</strong> Welche Ressource hast du in letzter Zeit übersehen, weil du sie von außen erwartet hast?</div>
+        `
+    },
+    {
+        day: 7,
+        date: "6. Dez",
+        title: "Flow",
+        special: true,
+        actualDate: new Date(2024, 11, 6),
+        content: `
+            <h3>6. Dezember - Nikolaus</h3>
+            <h3>Flow - Wenn das System sich selbst vergisst</h3>
+            <blockquote>"Der Fluss fließt nicht, er ist das Fließen." (Heraklit)</blockquote>
+            <div class="impuls"><strong>Impuls:</strong> Im Flow verschmilzt das selbstorganisierende System mit seiner Tätigkeit. Schöpfer und Schöpfung werden eins. Was wäre heute ein Tun, das dich vom Denken ins Werden bringt – und damit dein System gleich mit?</div>
+            <div class="question"><strong>Reflexion:</strong> Wann hast du dich zuletzt selbst vergessen? Was hat diesen Zustand ermöglicht?</div>
+        `
+    },
+    {
+        day: 8,
+        date: "7. Dez",
+        title: "Wegbereitung",
+        special: true,
+        actualDate: new Date(2024, 11, 7),
+        content: `
+            <div class="week-title">Woche 2: ZIRKULARITÄT – Wechselwirkung und Rückkopplung</div>
+            <h3>7. Dezember - Zweiter Advent</h3>
+            <h3>"Wege entstehen beim Gehen"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Systemisch gesehen: Der Weg entsteht durch das Gehen selbst. Jeder Schritt organisiert den nächsten.</div>
+            <blockquote>"Wer einen neuen Weg geht, wird Spuren hinterlassen." (Chinesisches Sprichwort)</blockquote>
+            <div class="question"><strong>Frage:</strong> Welchen Weg bereitest du gerade - und welcher Weg bereitet sich durch dich?</div>
+        `
+    },
+    {
+        day: 9,
+        date: "8. Dez",
+        title: "Zirkulärer Tanz",
+        actualDate: new Date(2024, 11, 8),
+        content: `
+            <h3>8. Dezember</h3>
+            <h3>Der gute Grund im zirkulären Tanz</h3>
+            <p><strong>Anekdote:</strong> "Warum komme ich immer zu spät?" - "Vielleicht kommst du genau rechtzeitig an, um nicht zu früh da zu sein?"</p>
+            <div class="impuls"><strong>Impuls:</strong> Jedes Verhalten hat einen guten Grund im zirkulären Tanz des Systems. Die Frage ist nicht "Warum?", sondern "Wofür?"</div>
+            <blockquote>"In jedem Muster liegt eine Weisheit verborgen - auch wenn sie uns zunächst verborgen bleibt." (Gregory Bateson)</blockquote>
+            <div class="question"><strong>Reflexion:</strong> Welche deiner Verhaltensweisen könntest du heute unter dem Blickwinkel des "guten Grund" betrachten?</div>
+        `
+    },
+    {
+        day: 10,
+        date: "9. Dez",
+        title: "Zirkularität",
+        actualDate: new Date(2024, 11, 9),
+        content: `
+            <h3>9. Dezember</h3>
+            <h3>Zirkularität statt Linearität</h3>
+            <div class="impuls"><strong>Impuls:</strong> Nicht "A verursacht B", sondern "A und B tanzen miteinander". Wer führt? Beide. Wer folgt? Beide.</div>
+            <p><strong>Anekdote:</strong> "Warum streiten Sie?" - "Weil er sich zurückzieht!" - "Warum ziehen Sie sich zurück?" - "Weil sie streitet!"</p>
+            <div class="question"><strong>Zirkuläre Frage:</strong> Wenn dein Partner sich mehr öffnen würde, würdest du weniger nachfragen - oder fragst du nach, weil er sich verschließt, was ihn dazu bringt, sich zu verschließen, weil du nachfragst?</div>
+        `
+    },
+    {
+        day: 11,
+        date: "10. Dez",
+        title: "Kontext",
+        actualDate: new Date(2024, 11, 10),
+        content: `
+            <h3>10. Dezember</h3>
+            <h3>Kontext ist alles - "Die unsichtbare Rahmung"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Verhalten ist nie "an sich" - es ist immer kontextgebunden. Im Kontext A ist es Lösung, im Kontext B Problem. Ein Bild im goldenen Rahmen wirkt anders als im schlichten Holzrahmen. Gleiches Bild, andere Wirkung.</div>
+            <blockquote>"Der Kontext ist die Hälfte der Botschaft." (Marshall McLuhan)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welches deiner Verhaltensmuster passt nicht mehr zum aktuellen Kontext? Wenn es ein Geschenk wäre – wofür wär's gut?</div>
+        `
+    },
+    {
+        day: 12,
+        date: "11. Dez",
+        title: "Irritation",
+        actualDate: new Date(2024, 11, 11),
+        content: `
+            <h3>11. Dezember</h3>
+            <h3>Verstörung & Irritation - "Zärtliche Irritation"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Systeme verändern sich durch Irritation, nicht durch Instruktion. Verstörung ist der Beginn von Entwicklung. Nur was irritiert, kann verändern. Zirkuläre Muster brauchen Störungen, um neue Schleifen zu bilden.</div>
+            <blockquote>"Wer nie den Boden unter den Füßen verliert, kann nicht fliegen lernen." (Unbekannt)</blockquote>
+            <div class="question"><strong>Provokation:</strong> Was, wenn deine größte Irritation gerade deine größte Entwicklungschance ist?</div>
+        `
+    },
+    {
+        day: 13,
+        date: "12. Dez",
+        title: "Wunderfrage",
+        actualDate: new Date(2024, 11, 12),
+        content: `
+            <h3>12. Dezember</h3>
+            <h3>Die Wunderfrage - "Wenn ein Wunder geschehen wäre..."</h3>
+            <p><strong>Die Frage:</strong> "Angenommen, über Nacht geschieht ein Wunder und dein Problem ist gelöst - woran würdest du es morgen früh bemerken? Was wäre anders?" Oder: Was würdest du anderes vom Christkind bekommen?</p>
+            <div class="impuls"><strong>Impuls:</strong> Die Wunderfrage durchbricht zirkuläre Problemtrance und öffnet Lösungsräume.</div>
+            <blockquote>"Die Zukunft gehört denen, die die Möglichkeiten erkennen, bevor sie offensichtlich werden." (Oscar Wilde)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Stell dir die Wunderfrage für eine aktuelle Herausforderung. Was wäre das erste kleine Zeichen der Veränderung?</div>
+        `
+    },
+    {
+        day: 14,
+        date: "13. Dez",
+        title: "Homöostase",
+        actualDate: new Date(2024, 11, 13),
+        content: `
+            <h3>13. Dezember</h3>
+            <h3>Homöostase - "Das dynamische Gleichgewicht"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Systeme streben nach Stabilität - Homöostase. Veränderung wird oft abgewehrt, selbst wenn sie hilfreich wäre. Das ist nicht böse - es ist Systemlogik. Wie ein Mobile, das sich nach jeder Berührung neu ausbalanciert, suchen Systeme ihr eigenes Gleichgewicht. Nicht Stillstand, sondern lebendige Balance.</div>
+            <blockquote>"Balance ist nicht etwas, das du findest, sondern etwas, das du erschaffst." (Jana Kingsford)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welche Veränderung würdest du gerne vollziehen? Welcher Teil deines Systems wehrt sich dagegen - und warum macht das Sinn? Was ist dein Beitrag zu diesem Tanz?</div>
+        `
+    },
+    {
+        day: 15,
+        date: "14. Dez",
+        title: "Freude",
+        special: true,
+        actualDate: new Date(2024, 11, 14),
+        content: `
+            <h3>14. Dezember - Dritter Advent</h3>
+            <h3>"Freude entsteht in der Kommunikation"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Gaudete heißt "Freut euch!" - Freude ist kein Zustand, sondern ein Kommunikationsereignis. Sie entsteht zwischen Menschen, in Resonanz. Freude erhellt das System.</div>
+            <blockquote>"Geteilte Freude ist doppelte Freude." (Christoph August Tiedge)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Mit wem teilst du heute deine Freude? Und: Wessen Freude nimmst du wahr?</div>
+        `
+    },
+    {
+        day: 16,
+        date: "15. Dez",
+        title: "Inneres Team",
+        actualDate: new Date(2024, 11, 15),
+        content: `
+            <div class="week-title">Woche 3: KOMMUNIKATION – Der systemtheoretische Operand</div>
+            <h3>15. Dezember</h3>
+            <h3>Das Innere Team - "Die Vielfalt in dir"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Du bist kein monolithisches System - du bist eine Vielstimmigkeit. Verschiedene innere Anteile interagieren zirkulär miteinander.</div>
+            <blockquote>"In jedem von uns wohnt eine ganze Versammlung." (Friedemann Schulz von Thun)</blockquote>
+            <div class="question"><strong>Übung:</strong> Welche inneren Stimmen melden sich bei einer anstehenden Entscheidung? Der Vorsichtige? Der Mutige? Der Perfektionist? Der Pragmatiker?<br><br>
+            <strong>Reflexionsfrage:</strong> Welcher Anteil darf heute mehr Gehör finden?</div>
+        `
+    },
+    {
+        day: 17,
+        date: "16. Dez",
+        title: "Werte",
+        actualDate: new Date(2024, 11, 16),
+        content: `
+            <h3>16. Dezember</h3>
+            <h3>Werte als Fixstern - "Orientierung im Nebel"</h3>
+            <div class="impuls"><strong>Impuls:</strong> In zirkulären Systemen kann man sich verirren. Werte sind wie Fixsterne - sie bleiben konstant, während sich alles andere bewegt. Werte stabilisieren Systeme in Veränderungsprozessen.</div>
+            <blockquote>"Wer seinen Werten folgt, kann sich nicht verlaufen." (Unbekannt)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Was sind deine drei wichtigsten Werte? Und: Treffen deine aktuellen Entscheidungen diese Werte?</div>
+        `
+    },
+    {
+        day: 18,
+        date: "17. Dez",
+        title: "Kommunikation",
+        actualDate: new Date(2024, 11, 17),
+        content: `
+            <h3>17. Dezember</h3>
+            <h3>Kommunikation als Operation - "Man kann nicht nicht kommunizieren"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Kommunikation ist die Operation, durch die sich soziale Systeme erschaffen. Nicht Menschen kommunizieren - Kommunikation kommuniziert.</div>
+            <blockquote>"Das Problem der Kommunikation ist die Illusion, sie sei gelungen." (George Bernard Shaw)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Was kommunizierst du heute durch dein Schweigen? Was durch deine Anwesenheit?</div>
+        `
+    },
+    {
+        day: 19,
+        date: "18. Dez",
+        title: "Ordnungsübergänge",
+        actualDate: new Date(2024, 11, 18),
+        content: `
+            <h3>18. Dezember</h3>
+            <h3>Ordnungsübergänge - "Wenn Rollen sich verändern"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Ordnungsübergänge markieren Schwellen im Leben: vom Kind zum Erwachsenen, vom Partner zum Elternteil, vom Berufstätigen zum Ruheständler. Systeme müssen sich neu organisieren.</div>
+            <blockquote>"Veränderung ist das Gesetz des Lebens. Wer nur auf die Vergangenheit oder Gegenwart blickt, verpasst die Zukunft." (John F. Kennedy)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welchen Ordnungsübergang durchlebst du gerade? Was bleibt dir treu, während sich die Rollen verändern?</div>
+        `
+    },
+    {
+        day: 20,
+        date: "19. Dez",
+        title: "Metaphern",
+        actualDate: new Date(2024, 11, 19),
+        content: `
+            <h3>19. Dezember</h3>
+            <h3>Metaphern als Brücken</h3>
+            <blockquote>"Metaphern sind die Poesie der Kommunikation."</blockquote>
+            <div class="impuls"><strong>Impuls:</strong> "Ich stehe vor einer Mauer" kommuniziert mehr als "Ich habe ein Problem". Metaphern öffnen Assoziationsräume und verbinden das Bekannte mit dem Unbekannten.</div>
+            <div class="question"><strong>Übung:</strong> Welche Metapher beschreibt deine aktuelle Lebenssituation? Ein Fluss? Ein Berg? Ein Tanz? Ein Labyrinth?</div>
+        `
+    },
+    {
+        day: 21,
+        date: "20. Dez",
+        title: "Systemgrenzen",
+        actualDate: new Date(2024, 11, 20),
+        content: `
+            <h3>20. Dezember</h3>
+            <h3>Systemgrenzen - "Was gehört dazu, was nicht?"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Systeme definieren sich durch Grenzen. Was ist innen, was außen? Diese Grenzen sind nicht objektiv - sie werden kommunikativ hergestellt. Autopoietische Systeme definieren ihre eigenen Grenzen. Sie sind durchlässig und fest zugleich.</div>
+            <p><strong>Anekdote:</strong> Ein Klient sagte einmal: "Ich weiß nicht, wo ich aufhöre und die anderen anfangen." Die Therapeutin antwortete: "Vielleicht ist genau das die Grenze - dort, wo du es nicht mehr weißt."</p>
+            <blockquote>"Gesunde Grenzen ermöglichen Kontakt ohne Verschmelzung." (Unbekannt)</blockquote>
+            <div class="question"><strong>Reflexion:</strong> Wo ziehst du heute eine Grenze? Wo lässt du sie durchlässig?</div>
+        `
+    },
+    {
+        day: 22,
+        date: "21. Dez",
+        title: "Narrative",
+        special: true,
+        actualDate: new Date(2024, 11, 21),
+        content: `
+            <div class="week-title">Woche 4: KONSTRUKTIVISMUS – Wirklichkeit als Konstruktion</div>
+            <h3>21. Dezember - Vierter Advent</h3>
+            <h3>Narrative - "Geschichten, die wir leben"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Wir leben nicht Fakten, wir leben Geschichten über Fakten. Narrative konstruieren Wirklichkeit. Die Geschichte, die du über dein Leben erzählst, formt dein Leben. Wirklichkeit ist nicht gegeben - sie wird erzählt, gedeutet, konstruiert.</div>
+            <p><strong>Anekdote:</strong> Ein Mann erzählte 20 Jahre die Geschichte seines Scheiterns. Eines Tages begann er, die Geschichte seiner Resilienz zu erzählen. Es waren dieselben Fakten - aber eine völlig andere Wirklichkeit.</p>
+            <blockquote>"Wir sind die Geschichten, die wir über uns erzählen." (Joan Didion)</blockquote>
+            <div class="question"><strong>Reflexion:</strong> Welche Geschichte erzählst du über dein Leben? Bist du Heldin, Opfer oder Beobachterin? Welche alternative Erzählung könnte deine Wirklichkeit verändern? Gibt es eine Geschichte, die du neu schreiben möchtest?</div>
+        `
+    },
+    {
+        day: 23,
+        date: "22. Dez",
+        title: "Nichtwissen",
+        actualDate: new Date(2024, 11, 22),
+        content: `
+            <h3>22. Dezember</h3>
+            <h3>Haltung des Nichtwissens</h3>
+            <blockquote>"Im Geist des Anfängers gibt es viele Möglichkeiten, im Geist des Experten nur wenige." (Shunryu Suzuki)</blockquote>
+            <div class="impuls"><strong>Impuls:</strong> Die Haltung des kleinen Kindes: neugierig, staunend, ohne Vorurteile. Konstruktivismus beginnt mit "Ich weiß es nicht". Diese Haltung öffnet Räume für neue Wirklichkeiten.</div>
+            <div class="question"><strong>Frage:</strong> Was könntest du heute mit den Augen eines Kindes sehen? Welche vermeintliche Gewissheit darfst du heute loslassen?</div>
+        `
+    },
+    {
+        day: 24,
+        date: "23. Dez",
+        title: "Allparteilichkeit",
+        actualDate: new Date(2024, 11, 23),
+        content: `
+            <h3>23. Dezember</h3>
+            <h3>Allparteilichkeit - "Allen Stimmen Raum geben"</h3>
+            <div class="impuls"><strong>Impuls:</strong> Allparteilichkeit bedeutet, allen Stimmen im System Raum zu geben - auch den leisen, auch den unbequemen. Nicht neutral, nicht parteiisch - allparteiisch.</div>
+            <blockquote>"Die Wahrheit ist selten rein und niemals einfach." (Oscar Wilde)</blockquote>
+            <div class="question"><strong>Reflexionsfrage:</strong> Welche Stimme in deinem inneren oder äußeren System hast du lange nicht gehört? Was würde sie sagen, wenn du ihr heute zuhören würdest?</div>
+        `
+    },
+    {
+        day: 25,
+        date: "24. Dez",
+        title: "EMERGENZ",
+        special: true,
+        actualDate: new Date(2024, 11, 24),
+        content: `
+            <h3>24. Dezember - Heiligabend: EMERGENZ</h3>
+            <h3>"Das Ganze ist mehr als die Summe seiner Teile"</h3>
+            <div class="impuls"><strong>Großer Impuls:</strong> Emergenz, das Wunder der Systemik. Wenn Einzelne zusammenkommen, entsteht etwas völlig Neues, Unvorhersehbares. Wie heute Abend, wenn Familie zusammenkommt. Wie in diesem Moment, wo du diese Zeilen liest.<br><br>
+            <strong>Weihnachten ist Emergenz:</strong>
+            <ul>
+                <li>Aus Ochs, Esel, Maria, Josef, Stall und Krippe entsteht: Weihnachten</li>
+                <li>Aus 24 Tagesimpulsen entsteht: Deine persönliche Adventsreise</li>
+                <li>Aus einzelnen Menschen entsteht: Familie, Gemeinschaft, Liebe</li>
+            </ul>
+            </div>
+            <blockquote>"Das Geheimnis der Veränderung ist, alle Energie nicht auf die Bekämpfung des Alten, sondern auf den Aufbau des Neuen zu konzentrieren." (Sokrates)</blockquote>
+            <blockquote>"Emergenz ist der Tanz des Lebens - unvorhersehbar, kreativ, schöpferisch." (Fritjof Capra)</blockquote>
+            <div class="question"><strong>Die große Reflexion:</strong>
+            <ul>
+                <li>Was ist in diesem Jahr in deinem Leben emergiert - unerwartet, neu, größer als die Summe?</li>
+                <li>Was ist in diesem Advent in dir emergiert? Was ist neu entstanden, das du am 30. November noch nicht sehen konntest?</li>
+                <li>Welche Emergenz lädst du für das kommende Jahr ein?</li>
+                <li>Was könnte entstehen, wenn du alle deine Ressourcen, Erfahrungen, Beziehungen zusammenbringst?</li>
+            </ul>
+            </div>
+            <div class="question"><strong>Die Weihnachtsfrage:</strong><br>
+            Wenn alle Systeme, zu denen du gehörst (Familie, Freunde, Arbeit, Gemeinschaft), für einen Moment in Resonanz schwingen würden - was würde emergieren? Welches Neue, Unerwartete, Wunderbare könnte sich zeigen?</div>
+            <div class="impuls"><strong>Systemische Weihnachtsbotschaft:</strong> Du bist Teil vieler Systeme. Deine Anwesenheit verändert jedes System. Deine Bewusstheit verändert die Wirklichkeit. Du bist Beobachterin und Schöpferin zugleich.</div>
+        `
+    }
+];
+
+// Fisher-Yates Shuffle für zufällige Anordnung
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Finde das Türchen für das heutige Datum
+function getTodaysDoor() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    for (let door of calendarContent) {
+        const doorDate = new Date(door.actualDate);
+        doorDate.setHours(0, 0, 0, 0);
+        if (doorDate.getTime() === today.getTime()) {
+            return door.day;
+        }
+    }
+    return null;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const calendarGrid = document.getElementById('calendarGrid');
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modalBody');
+    const closeBtn = document.querySelector('.close');
+
+    // Zufällige Anordnung der Türchen
+    const shuffledContent = shuffleArray(calendarContent);
+    
+    shuffledContent.forEach(day => {
+        calendarGrid.appendChild(createDoorElement(day));
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    function createDoorElement(dayData) {
+        const door = document.createElement('div');
+        door.className = 'door';
+        
+        const isOpened = isDoorOpened(dayData.day);
+        const todaysDoor = getTodaysDoor();
+        const canOpen = isOpened || (dayData.day === todaysDoor);
+        
+        if (!canOpen) {
+            door.classList.add('locked');
+        }
+        
+        if (isOpened) {
+            door.classList.add('opened');
+        }
+        
+        if (dayData.special) {
+            door.classList.add('special');
+        }
+
+        door.innerHTML = `
+            <div class="door-number">${dayData.day}</div>
+            <div class="door-date">${dayData.date}</div>
+            <div class="door-title">${dayData.title}</div>
+        `;
+
+        door.addEventListener('click', () => {
+            if (canOpen) {
+                openDoor(dayData);
+            } else {
+                showLockedMessage(dayData);
+            }
+        });
+
+        return door;
+    }
+
+    function isDoorOpened(dayNumber) {
+        const opened = JSON.parse(localStorage.getItem('openedDoors') || '[]');
+        return opened.includes(dayNumber);
+    }
+
+    function markDoorAsOpened(dayNumber) {
+        const opened = JSON.parse(localStorage.getItem('openedDoors') || '[]');
+        if (!opened.includes(dayNumber)) {
+            opened.push(dayNumber);
+            localStorage.setItem('openedDoors', JSON.stringify(opened));
+        }
+    }
+
+    function openDoor(dayData) {
+        modalBody.innerHTML = dayData.content;
+        modal.style.display = 'block';
+        markDoorAsOpened(dayData.day);
+        
+        document.querySelectorAll('.door').forEach(door => {
+            const doorNum = parseInt(door.querySelector('.door-number').textContent);
+            if (doorNum === dayData.day) {
+                door.classList.add('opened');
+            }
+        });
+        
+        modalBody.scrollTop = 0;
+    }
+
+    function showLockedMessage(dayData) {
+        const todaysDoor = getTodaysDoor();
+        let message = '';
+        
+        if (todaysDoor === null) {
+            message = `
+                <h3>Noch nicht verfügbar</h3>
+                <div class="impuls">
+                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong>.</p>
+                    <p>Die Adventszeit hat noch nicht begonnen. Der erste Tag ist der 30. November.</p>
+                </div>
+            `;
+        } else {
+            message = `
+                <h3>Heute nicht verfügbar</h3>
+                <div class="impuls">
+                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong>.</p>
+                    <p>Pro Tag darf nur ein Türchen geöffnet werden.</p>
+                    <p>Heute ist Türchen <strong>${todaysDoor}</strong> an der Reihe.</p>
+                </div>
+                <blockquote>"Geduld ist Teil der systemischen Reise. Jeder Tag kommt zur rechten Zeit." (Prediger 3,1)</blockquote>
+            `;
+        }
+        
+        modalBody.innerHTML = message;
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+            closeModal();
+        }
+    });
+});
+
+// Reset-Funktion
+function resetCalendar() {
+    if (confirm('Alle geöffneten Türchen zurücksetzen?')) {
+        localStorage.removeItem('openedDoors');
+        location.reload();
+    }
+}
+
+console.log('🎄 Systemischer Adventskalender');
+console.log('Zum Zurücksetzen: resetCalendar()');
+    </script>
+</body>
+</html>
