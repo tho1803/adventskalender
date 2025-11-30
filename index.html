@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Systemischer Adventskalender mit 25 Türchen</title>
     <style>
 :root {
@@ -19,6 +19,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -26,70 +27,73 @@ body {
     background: linear-gradient(135deg, var(--forest-green) 0%, var(--sage-green) 100%);
     color: var(--dark-text);
     min-height: 100vh;
-    padding: 20px;
+    padding: 10px;
+    overflow-x: hidden;
 }
 
 header {
     text-align: center;
-    margin-bottom: 40px;
-    padding: 30px 20px;
+    margin-bottom: 20px;
+    padding: 20px 15px;
     background: rgba(253, 248, 243, 0.95);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
 
 h1 {
     color: var(--deep-red);
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    line-height: 1.3;
 }
 
 .subtitle {
     color: var(--forest-green);
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     font-style: italic;
+    line-height: 1.4;
 }
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 5px 20px 5px;
 }
 
 .door {
     position: relative;
     aspect-ratio: 1;
     background: linear-gradient(145deg, var(--warm-red), var(--deep-red));
-    border: 3px solid var(--gold);
-    border-radius: 12px;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 15px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    touch-action: manipulation;
 }
 
-.door:hover {
-    transform: translateY(-8px) scale(1.05);
-    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+.door:active {
+    transform: scale(0.95);
 }
 
 .door.special {
-    border-width: 5px;
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.7);
+    border-width: 3px;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
     animation: goldGlow 2s ease-in-out infinite;
 }
 
 @keyframes goldGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
-    50% { box-shadow: 0 0 35px rgba(212, 175, 55, 0.9); }
+    0%, 100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
+    50% { box-shadow: 0 0 25px rgba(212, 175, 55, 0.9); }
 }
 
 .door.opened {
@@ -102,36 +106,34 @@ h1 {
     opacity: 0.6;
 }
 
-.door.locked:hover {
+.door.locked:active {
     transform: none;
 }
 
 .door-number {
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: bold;
     color: white;
-    text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 2px;
 }
 
 .door-date {
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     color: var(--cream);
     font-style: italic;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    text-align: center;
 }
 
 .door-title {
-    font-size: 0.85rem;
+    font-size: 0.65rem;
     color: var(--cream);
     text-align: center;
     font-weight: 500;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.door:hover .door-title {
-    opacity: 1;
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
 }
 
 .modal {
@@ -145,6 +147,7 @@ h1 {
     overflow: auto;
     background-color: rgba(45, 80, 22, 0.95);
     animation: fadeIn 0.3s;
+    -webkit-overflow-scrolling: touch;
 }
 
 @keyframes fadeIn {
@@ -154,21 +157,22 @@ h1 {
 
 .modal-content {
     background-color: var(--cream);
-    margin: 3% auto;
-    padding: 40px;
+    margin: 10px;
+    margin-top: 60px;
+    padding: 25px 20px;
     border: 3px solid var(--gold);
-    border-radius: 15px;
-    width: 90%;
-    max-width: 800px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     animation: slideIn 0.4s;
-    max-height: 85vh;
-    overflow-y: auto;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
 }
 
 @keyframes slideIn {
     from {
-        transform: translateY(-50px);
+        transform: translateY(-30px);
         opacity: 0;
     }
     to {
@@ -179,96 +183,223 @@ h1 {
 
 .close {
     color: var(--deep-red);
+    position: sticky;
+    top: 0;
     float: right;
-    font-size: 32px;
+    font-size: 36px;
     font-weight: bold;
     cursor: pointer;
     transition: color 0.3s;
     line-height: 1;
+    z-index: 10;
+    background: var(--cream);
+    padding: 0 10px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.close:hover {
+.close:active {
     color: var(--warm-red);
+    transform: scale(0.95);
 }
 
 #modalBody {
-    margin-top: 20px;
+    margin-top: 10px;
     color: var(--dark-text);
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 #modalBody h3 {
     color: var(--deep-red);
-    font-size: 1.5rem;
-    margin-top: 20px;
-    margin-bottom: 15px;
+    font-size: 1.3rem;
+    margin-top: 15px;
+    margin-bottom: 12px;
+    line-height: 1.3;
 }
 
 #modalBody .week-title {
     color: var(--sage-green);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-style: italic;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding: 10px;
     background: rgba(139, 157, 131, 0.1);
     border-left: 4px solid var(--sage-green);
+    line-height: 1.4;
 }
 
 #modalBody blockquote {
     border-left: 4px solid var(--gold);
-    padding-left: 20px;
-    margin: 20px 0;
+    padding-left: 15px;
+    margin: 15px 0;
     font-style: italic;
     color: var(--forest-green);
+    font-size: 0.9rem;
 }
 
 #modalBody .impuls {
     background: rgba(212, 175, 55, 0.1);
-    padding: 15px;
+    padding: 12px;
     border-radius: 8px;
-    margin: 15px 0;
+    margin: 12px 0;
 }
 
 #modalBody .question {
     background: rgba(139, 45, 45, 0.1);
-    padding: 15px;
+    padding: 12px;
     border-radius: 8px;
-    margin: 15px 0;
+    margin: 12px 0;
     border-left: 4px solid var(--deep-red);
 }
 
 #modalBody ol, #modalBody ul {
-    margin-left: 30px;
-    margin-top: 10px;
+    margin-left: 25px;
+    margin-top: 8px;
+    line-height: 1.6;
 }
 
-@media (max-width: 768px) {
-    h1 {
-        font-size: 1.8rem;
+#modalBody li {
+    margin-bottom: 8px;
+}
+
+/* Tablet Landscape */
+@media (min-width: 600px) and (max-width: 900px) {
+    .calendar-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        padding: 0 10px 20px 10px;
     }
     
-    .calendar-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 15px;
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
     }
     
     .door-number {
         font-size: 2.5rem;
     }
     
-    .modal-content {
-        padding: 25px;
-        margin: 10% auto;
+    .door-title {
+        font-size: 0.75rem;
     }
 }
 
-@media (max-width: 480px) {
+/* Desktop */
+@media (min-width: 901px) {
+    body {
+        padding: 20px;
+    }
+    
+    header {
+        margin-bottom: 40px;
+        padding: 30px 20px;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.2rem;
+    }
+    
     .calendar-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+        max-width: 1200px;
+        padding: 20px;
+    }
+    
+    .door {
+        padding: 15px;
+    }
+    
+    .door:hover {
+        transform: translateY(-8px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+    }
+    
+    .door:hover .door-title {
+        opacity: 1;
+    }
+    
+    .door-title {
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 0.85rem;
     }
     
     .door-number {
-        font-size: 2rem;
+        font-size: 3rem;
+    }
+    
+    .door-date {
+        font-size: 0.9rem;
+    }
+    
+    .modal-content {
+        margin: 3% auto;
+        padding: 40px;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+    
+    #modalBody {
+        font-size: 1rem;
+    }
+    
+    #modalBody h3 {
+        font-size: 1.5rem;
+    }
+    
+    .close {
+        font-size: 32px;
+        position: static;
+        float: right;
+        width: auto;
+        height: auto;
+        background: transparent;
+        box-shadow: none;
+    }
+    
+    .close:hover {
+        color: var(--warm-red);
+    }
+}
+
+/* Sehr kleine Smartphones */
+@media (max-width: 360px) {
+    h1 {
+        font-size: 1.3rem;
+    }
+    
+    .subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .door-number {
+        font-size: 1.8rem;
+    }
+    
+    .door-date {
+        font-size: 0.6rem;
+    }
+    
+    .door-title {
+        font-size: 0.6rem;
+    }
+    
+    .calendar-grid {
+        gap: 8px;
     }
 }
 </style>
@@ -301,7 +432,7 @@ const calendarContent = [
         date: "30. Nov",
         title: "Neubeginn",
         special: true,
-        startDate: new Date(2025, 10, 30, 2, 0, 0), // 30. November 2025, 02:00 Uhr
+        startDate: new Date(2025, 10, 30, 2, 0, 0),
         content: `
             <div class="week-title">Woche 1: AUTOPOIESIS – Selbstorganisation und Selbsterschaffung</div>
             <h3>30. November - Erster Advent: Neubeginn</h3>
@@ -315,7 +446,7 @@ const calendarContent = [
         day: 2,
         date: "1. Dez",
         title: "Referenzsystem",
-        startDate: new Date(2025, 11, 1, 2, 0, 0), // 1. Dezember 2025, 02:00 Uhr
+        startDate: new Date(2025, 11, 1, 2, 0, 0),
         content: `
             <h3>1. Dezember</h3>
             <h3>Das eigene Referenzsystem</h3>
@@ -660,18 +791,13 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// Prüfe ob ein Türchen verfügbar ist
 function isDoorAvailable(doorDay) {
     const now = new Date();
     const door = calendarContent.find(d => d.day === doorDay);
-    
     if (!door) return false;
-    
-    // Türchen ist verfügbar, wenn sein Startdatum erreicht oder überschritten ist
     return now >= door.startDate;
 }
 
-// LocalStorage für geöffnete Türchen
 function isDoorOpened(dayNumber) {
     const opened = JSON.parse(localStorage.getItem('openedDoors') || '[]');
     return opened.includes(dayNumber);
@@ -691,7 +817,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('modalBody');
     const closeBtn = document.querySelector('.close');
 
-    // Zufällige Anordnung der Türchen
     const shuffledContent = shuffleArray(calendarContent);
     
     shuffledContent.forEach(day => {
@@ -699,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeBtn.addEventListener('click', closeModal);
-    window.addEventListener('click', (e) => {
+    modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal();
     });
 
@@ -709,10 +834,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isOpened = isDoorOpened(dayData.day);
         const isAvailable = isDoorAvailable(dayData.day);
-        
-        // Türchen kann geöffnet werden, wenn:
-        // 1. Es wurde bereits geöffnet ODER
-        // 2. Seine Zeit ist gekommen (Startdatum erreicht)
         const canOpen = isOpened || isAvailable;
         
         if (!canOpen) {
@@ -748,6 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
         markDoorAsOpened(dayData.day);
         modalBody.innerHTML = dayData.content;
         modal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Verhindere Scrollen im Hintergrund
     }
 
     function showLockedMessage(dayData) {
@@ -757,28 +879,26 @@ document.addEventListener('DOMContentLoaded', () => {
             <p>Hab noch ein wenig Geduld... 🎄</p>
         `;
         modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
         modal.style.display = 'none';
-        // Aktualisiere Türchenansicht nach dem Schließen
+        document.body.style.overflow = ''; // Erlaube wieder Scrollen
         location.reload();
     }
 });
 
-// Hilfsfunktion für Tests: Alle Türchen zurücksetzen
 function resetCalendar() {
     localStorage.removeItem('openedDoors');
     localStorage.removeItem('calendarVersion');
     location.reload();
 }
 
-// Debug-Info in der Konsole
-console.log('🎄 Systemischer Adventskalender 2025 geladen');
+console.log('🎄 Systemischer Adventskalender 2025 (Mobile-optimiert)');
 console.log('Aktuelle Zeit:', new Date().toLocaleString('de-DE'));
 console.log('Bereits geöffnete Türchen:', JSON.parse(localStorage.getItem('openedDoors') || '[]'));
 
-// Zeige verfügbare Türchen
 let available = [];
 for (let i = 1; i <= 25; i++) {
     if (isDoorAvailable(i)) available.push(i);
