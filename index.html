@@ -654,24 +654,24 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// EINFACHE LOGIK: Welches Türchen ist heute verfügbar?
+// KORRIGIERTE LOGIK: Finde das ERSTE noch nicht geöffnete Türchen, dessen Zeit gekommen ist
 function getTodaysDoorNumber() {
     const now = new Date();
+    const opened = JSON.parse(localStorage.getItem('openedDoors') || '[]');
     
-    // Durchlaufe alle Türchen
-    for (let door of calendarContent) {
-        // Ist das Startdatum dieses Türchens erreicht oder überschritten?
-        if (now >= door.startDate) {
-            // Ist das nächste Türchen noch nicht verfügbar?
-            const nextDoor = calendarContent.find(d => d.day === door.day + 1);
-            if (!nextDoor || now < nextDoor.startDate) {
-                // Dann ist DIESES Türchen das aktuelle
-                return door.day;
-            }
+    // Sortiere Türchen nach day-Nummer (nicht nach Datum!)
+    const sortedDoors = [...calendarContent].sort((a, b) => a.day - b.day);
+    
+    // Finde das erste Türchen, das:
+    // 1. Noch nicht geöffnet wurde UND
+    // 2. Dessen Startdatum erreicht oder überschritten ist
+    for (let door of sortedDoors) {
+        if (!opened.includes(door.day) && now >= door.startDate) {
+            return door.day;
         }
     }
     
-    // Falls wir noch vor dem ersten Türchen sind
+    // Falls alle verfügbaren Türchen bereits geöffnet sind, return null
     return null;
 }
 
@@ -714,10 +714,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const isOpened = isDoorOpened(dayData.day);
         const todaysDoorNumber = getTodaysDoorNumber();
         
-        // EINFACHE REGEL:
+        // KORRIGIERTE REGEL:
         // Türchen kann geöffnet werden, wenn:
         // 1. Es wurde bereits geöffnet ODER
-        // 2. Es ist das heutige Türchen
+        // 2. Es ist das aktuell verfügbare Türchen
         const canOpen = isOpened || (dayData.day === todaysDoorNumber);
         
         if (!canOpen) {
@@ -782,7 +782,7 @@ function resetCalendar() {
 
 // Debug-Info in der Konsole
 console.log('🎄 Systemischer Adventskalender geladen');
-console.log('Aktuelles verfügbares Türchen:', getTodaysDoorNumber());
+console.log('Aktuell verfügbares Türchen:', getTodaysDoorNumber());
 console.log('Bereits geöffnete Türchen:', JSON.parse(localStorage.getItem('openedDoors') || '[]'));
 console.log('Aktuelle Zeit:', new Date().toLocaleString('de-DE'));
 </script>
