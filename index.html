@@ -402,7 +402,7 @@ const calendarContent = [
         date: "30. Nov",
         title: "Neubeginn",
         special: true,
-        actualDate: new Date(2024, 10, 30),
+        actualDate: new Date(2024, 10, 30), // 30. November 2024
         content: `
             <div class="week-title">Woche 1: AUTOPOIESIS – Selbstorganisation und Selbsterschaffung</div>
             <h3>30. November - Erster Advent: Neubeginn</h3>
@@ -773,15 +773,22 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// Finde das Türchen für das heutige Datum
+// Finde das Türchen für das heutige Datum (ab 02:00 Uhr)
 function getTodaysDoor() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
+    
+    // Wenn es vor 02:00 Uhr ist, gilt noch der vorherige Tag
+    if (now.getHours() < 2) {
+        now.setDate(now.getDate() - 1);
+    }
+    
+    // Setze auf Mitternacht für Vergleich
+    now.setHours(0, 0, 0, 0);
     
     for (let door of calendarContent) {
         const doorDate = new Date(door.actualDate);
         doorDate.setHours(0, 0, 0, 0);
-        if (doorDate.getTime() === today.getTime()) {
+        if (doorDate.getTime() === now.getTime()) {
             return door.day;
         }
     }
@@ -873,25 +880,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showLockedMessage(dayData) {
         const todaysDoor = getTodaysDoor();
+        const now = new Date();
         let message = '';
         
         if (todaysDoor === null) {
             message = `
                 <h3>Noch nicht verfügbar</h3>
                 <div class="impuls">
-                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong>.</p>
+                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong> ab 02:00 Uhr morgens.</p>
                     <p>Die Adventszeit hat noch nicht begonnen. Der erste Tag ist der 30. November.</p>
                 </div>
+            `;
+        } else if (now.getHours() < 2) {
+            message = `
+                <h3>Noch nicht verfügbar</h3>
+                <div class="impuls">
+                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong> ab <strong>02:00 Uhr morgens</strong>.</p>
+                    <p>Es ist noch vor 02:00 Uhr - das heutige Türchen wird in Kürze freigeschaltet.</p>
+                </div>
+                <blockquote>"Geduld ist Teil der systemischen Reise. Jeder Tag kommt zur rechten Zeit."</blockquote>
             `;
         } else {
             message = `
                 <h3>Heute nicht verfügbar</h3>
                 <div class="impuls">
-                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong>.</p>
+                    <p>Dieses Türchen öffnet sich am <strong>${dayData.date}</strong> ab 02:00 Uhr morgens.</p>
                     <p>Pro Tag darf nur ein Türchen geöffnet werden.</p>
                     <p>Heute ist Türchen <strong>${todaysDoor}</strong> an der Reihe.</p>
                 </div>
-                <blockquote>"Geduld ist Teil der systemischen Reise. Jeder Tag kommt zur rechten Zeit." (Prediger 3,1)</blockquote>
+                <blockquote>"Geduld ist Teil der systemischen Reise. Jeder Tag kommt zur rechten Zeit."</blockquote>
             `;
         }
         
@@ -910,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Reset-Funktion
+// Reset-Funktion (für Tests)
 function resetCalendar() {
     if (confirm('Alle geöffneten Türchen zurücksetzen?')) {
         localStorage.removeItem('openedDoors');
@@ -919,6 +936,7 @@ function resetCalendar() {
 }
 
 console.log('🎄 Systemischer Adventskalender');
+console.log('Türchen öffnen sich täglich ab 02:00 Uhr');
 console.log('Zum Zurücksetzen: resetCalendar()');
     </script>
 </body>
