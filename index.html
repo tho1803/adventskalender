@@ -289,13 +289,19 @@ h1 {
     </div>
 
 <script>
+// WICHTIG: LocalStorage beim ersten Laden zurücksetzen
+if (!localStorage.getItem('calendarVersion') || localStorage.getItem('calendarVersion') !== '2025-v1') {
+    localStorage.removeItem('openedDoors');
+    localStorage.setItem('calendarVersion', '2025-v1');
+}
+
 const calendarContent = [
     {
         day: 1,
         date: "30. Nov",
         title: "Neubeginn",
         special: true,
-        startDate: new Date(2024, 10, 30, 2, 0, 0), // 30. November 2024, 02:00 Uhr
+        startDate: new Date(2025, 10, 30, 2, 0, 0), // 30. November 2025, 02:00 Uhr
         content: `
             <div class="week-title">Woche 1: AUTOPOIESIS – Selbstorganisation und Selbsterschaffung</div>
             <h3>30. November - Erster Advent: Neubeginn</h3>
@@ -309,7 +315,7 @@ const calendarContent = [
         day: 2,
         date: "1. Dez",
         title: "Referenzsystem",
-        startDate: new Date(2024, 11, 1, 2, 0, 0), // 1. Dezember 2024, 02:00 Uhr
+        startDate: new Date(2025, 11, 1, 2, 0, 0), // 1. Dezember 2025, 02:00 Uhr
         content: `
             <h3>1. Dezember</h3>
             <h3>Das eigene Referenzsystem</h3>
@@ -322,7 +328,7 @@ const calendarContent = [
         day: 3,
         date: "2. Dez",
         title: "Glaubenssätze",
-        startDate: new Date(2024, 11, 2, 2, 0, 0),
+        startDate: new Date(2025, 11, 2, 2, 0, 0),
         content: `
             <h3>2. Dezember</h3>
             <h3>Glaubenssätze als lebendige Systeme - "Die unsichtbaren Regisseure"</h3>
@@ -335,7 +341,7 @@ const calendarContent = [
         day: 4,
         date: "3. Dez",
         title: "Perspektivwechsel",
-        startDate: new Date(2024, 11, 3, 2, 0, 0),
+        startDate: new Date(2025, 11, 3, 2, 0, 0),
         content: `
             <h3>3. Dezember</h3>
             <h3>Perspektivwechsel - "Die Kunst des Umkreisens"</h3>
@@ -354,7 +360,7 @@ const calendarContent = [
         day: 5,
         date: "4. Dez",
         title: "Der gute Grund",
-        startDate: new Date(2024, 11, 4, 2, 0, 0),
+        startDate: new Date(2025, 11, 4, 2, 0, 0),
         content: `
             <h3>4. Dezember</h3>
             <h3>Der gute Grund - "Alles macht Sinn im jeweiligen Kontext"</h3>
@@ -367,7 +373,7 @@ const calendarContent = [
         day: 6,
         date: "5. Dez",
         title: "Ressourcen",
-        startDate: new Date(2024, 11, 5, 2, 0, 0),
+        startDate: new Date(2025, 11, 5, 2, 0, 0),
         content: `
             <h3>5. Dezember</h3>
             <h3>Ressourcen: Die Selbstversorgung des Systems</h3>
@@ -381,7 +387,7 @@ const calendarContent = [
         date: "6. Dez",
         title: "Flow",
         special: true,
-        startDate: new Date(2024, 11, 6, 2, 0, 0),
+        startDate: new Date(2025, 11, 6, 2, 0, 0),
         content: `
             <h3>6. Dezember - Nikolaus</h3>
             <h3>Flow - Wenn das System sich selbst vergisst</h3>
@@ -394,7 +400,7 @@ const calendarContent = [
         day: 8,
         date: "7. Dez",
         title: "Grenzen",
-        startDate: new Date(2024, 11, 7, 2, 0, 0),
+        startDate: new Date(2025, 11, 7, 2, 0, 0),
         content: `
             <h3>7. Dezember</h3>
             <h3>Grenzen - "Wo du aufhörst und die Welt beginnt"</h3>
@@ -408,7 +414,7 @@ const calendarContent = [
         date: "8. Dez",
         title: "Rückkopplung",
         special: true,
-        startDate: new Date(2024, 11, 8, 2, 0, 0),
+        startDate: new Date(2025, 11, 8, 2, 0, 0),
         content: `
             <div class="week-title">Woche 2: ZIRKULARITÄT – Wenn Wirkung zur Ursache wird</div>
             <h3>8. Dezember - Zweiter Advent: Rückkopplung</h3>
@@ -422,7 +428,7 @@ const calendarContent = [
         day: 10,
         date: "9. Dez",
         title: "Muster erkennen",
-        startDate: new Date(2024, 11, 9, 2, 0, 0),
+        startDate: new Date(2025, 11, 9, 2, 0, 0),
         content: `
             <h3>9. Dezember</h3>
             <h3>Muster erkennen - "Die Wiederholung des Immergleichen"</h3>
@@ -435,7 +441,7 @@ const calendarContent = [
         day: 11,
         date: "10. Dez",
         title: "Teufelskreis",
-        startDate: new Date(2024, 11, 10, 2, 0, 0),
+        startDate: new Date(2025, 11, 10, 2, 0, 0),
         content: `
             <h3>10. Dezember</h3>
             <h3>Teufelskreis durchbrechen - "Der Ausstieg aus der Spirale"</h3>
@@ -448,7 +454,7 @@ const calendarContent = [
         day: 12,
         date: "11. Dez",
         title: "Engelskreis",
-        startDate: new Date(2024, 11, 11, 2, 0, 0),
+        startDate: new Date(2025, 11, 11, 2, 0, 0),
         content: `
             <h3>11. Dezember</h3>
             <h3>Engelskreis erschaffen - "Wenn sich das Gute verstärkt"</h3>
@@ -461,7 +467,7 @@ const calendarContent = [
         day: 13,
         date: "12. Dez",
         title: "Selbsterfüllende Prophezeiung",
-        startDate: new Date(2024, 11, 12, 2, 0, 0),
+        startDate: new Date(2025, 11, 12, 2, 0, 0),
         content: `
             <h3>12. Dezember</h3>
             <h3>Die selbsterfüllende Prophezeiung - "Du bekommst, was du erwartest"</h3>
@@ -474,7 +480,7 @@ const calendarContent = [
         day: 14,
         date: "13. Dez",
         title: "Kipppunkte",
-        startDate: new Date(2024, 11, 13, 2, 0, 0),
+        startDate: new Date(2025, 11, 13, 2, 0, 0),
         content: `
             <h3>13. Dezember</h3>
             <h3>Kipppunkte - "Wenn aus Quantität Qualität wird"</h3>
@@ -487,7 +493,7 @@ const calendarContent = [
         day: 15,
         date: "14. Dez",
         title: "Resonanz",
-        startDate: new Date(2024, 11, 14, 2, 0, 0),
+        startDate: new Date(2025, 11, 14, 2, 0, 0),
         content: `
             <h3>14. Dezember</h3>
             <h3>Resonanz - "Wenn Systeme mitschwingen"</h3>
@@ -501,7 +507,7 @@ const calendarContent = [
         date: "15. Dez",
         title: "Bedeutung entsteht",
         special: true,
-        startDate: new Date(2024, 11, 15, 2, 0, 0),
+        startDate: new Date(2025, 11, 15, 2, 0, 0),
         content: `
             <div class="week-title">Woche 3: KOMMUNIKATION – Wie Wirklichkeit im Dialog entsteht</div>
             <h3>15. Dezember - Dritter Advent: Bedeutung entsteht</h3>
@@ -515,7 +521,7 @@ const calendarContent = [
         day: 17,
         date: "16. Dez",
         title: "Zuhören",
-        startDate: new Date(2024, 11, 16, 2, 0, 0),
+        startDate: new Date(2025, 11, 16, 2, 0, 0),
         content: `
             <h3>16. Dezember</h3>
             <h3>Die Kunst des Zuhörens - "Verstehen heißt hören, was nicht gesagt wird"</h3>
@@ -528,7 +534,7 @@ const calendarContent = [
         day: 18,
         date: "17. Dez",
         title: "Fragen statt Antworten",
-        startDate: new Date(2024, 11, 17, 2, 0, 0),
+        startDate: new Date(2025, 11, 17, 2, 0, 0),
         content: `
             <h3>17. Dezember</h3>
             <h3>Die Kraft der Fragen - "Wer fragt, führt"</h3>
@@ -541,7 +547,7 @@ const calendarContent = [
         day: 19,
         date: "18. Dez",
         title: "Metakommunikation",
-        startDate: new Date(2024, 11, 18, 2, 0, 0),
+        startDate: new Date(2025, 11, 18, 2, 0, 0),
         content: `
             <h3>18. Dezember</h3>
             <h3>Über das Reden reden - "Die Metaebene"</h3>
@@ -554,7 +560,7 @@ const calendarContent = [
         day: 20,
         date: "19. Dez",
         title: "Paradoxe Kommunikation",
-        startDate: new Date(2024, 11, 19, 2, 0, 0),
+        startDate: new Date(2025, 11, 19, 2, 0, 0),
         content: `
             <h3>19. Dezember</h3>
             <h3>Paradoxien und Double-Binds - "Sei spontan!"</h3>
@@ -567,7 +573,7 @@ const calendarContent = [
         day: 21,
         date: "20. Dez",
         title: "Schweigen",
-        startDate: new Date(2024, 11, 20, 2, 0, 0),
+        startDate: new Date(2025, 11, 20, 2, 0, 0),
         content: `
             <h3>20. Dezember</h3>
             <h3>Die Sprache des Schweigens - "Was ungesagt bleibt"</h3>
@@ -580,7 +586,7 @@ const calendarContent = [
         day: 22,
         date: "21. Dez",
         title: "Wahrheit ist konstruiert",
-        startDate: new Date(2024, 11, 21, 2, 0, 0),
+        startDate: new Date(2025, 11, 21, 2, 0, 0),
         content: `
             <h3>21. Dezember</h3>
             <h3>Die Konstruktion von Wahrheit - "Es gibt keine objektive Realität"</h3>
@@ -594,7 +600,7 @@ const calendarContent = [
         date: "22. Dez",
         title: "Beobachterabhängigkeit",
         special: true,
-        startDate: new Date(2024, 11, 22, 2, 0, 0),
+        startDate: new Date(2025, 11, 22, 2, 0, 0),
         content: `
             <div class="week-title">Woche 4: KONSTRUKTIVISMUS – Die Wirklichkeit, die wir erschaffen</div>
             <h3>22. Dezember - Vierter Advent: Beobachterabhängigkeit</h3>
@@ -608,7 +614,7 @@ const calendarContent = [
         day: 24,
         date: "23. Dez",
         title: "Möglichkeitsräume",
-        startDate: new Date(2024, 11, 23, 2, 0, 0),
+        startDate: new Date(2025, 11, 23, 2, 0, 0),
         content: `
             <h3>23. Dezember</h3>
             <h3>Möglichkeitsräume öffnen - "Was wäre, wenn...?"</h3>
@@ -622,7 +628,7 @@ const calendarContent = [
         date: "24. Dez",
         title: "Emergenz",
         special: true,
-        startDate: new Date(2024, 11, 24, 2, 0, 0),
+        startDate: new Date(2025, 11, 24, 2, 0, 0),
         content: `
             <h3>24. Dezember - Heiliger Abend</h3>
             <div class="week-title">EMERGENZ – Wenn das Ganze mehr ist als die Summe seiner Teile</div>
@@ -654,7 +660,7 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-// RICHTIGE LOGIK: Prüfe ob ein Türchen verfügbar ist
+// Prüfe ob ein Türchen verfügbar ist
 function isDoorAvailable(doorDay) {
     const now = new Date();
     const door = calendarContent.find(d => d.day === doorDay);
@@ -704,7 +710,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const isOpened = isDoorOpened(dayData.day);
         const isAvailable = isDoorAvailable(dayData.day);
         
-        // RICHTIGE REGEL:
         // Türchen kann geöffnet werden, wenn:
         // 1. Es wurde bereits geöffnet ODER
         // 2. Seine Zeit ist gekommen (Startdatum erreicht)
@@ -743,9 +748,6 @@ document.addEventListener('DOMContentLoaded', () => {
         markDoorAsOpened(dayData.day);
         modalBody.innerHTML = dayData.content;
         modal.style.display = 'block';
-        
-        // Türchen bleibt grün - nur Modal schließen nötig
-        // KEIN Reload mehr!
     }
 
     function showLockedMessage(dayData) {
@@ -759,7 +761,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeModal() {
         modal.style.display = 'none';
-        // Aktualisiere nur die Türchenansicht nach dem Schließen
+        // Aktualisiere Türchenansicht nach dem Schließen
         location.reload();
     }
 });
@@ -767,11 +769,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Hilfsfunktion für Tests: Alle Türchen zurücksetzen
 function resetCalendar() {
     localStorage.removeItem('openedDoors');
+    localStorage.removeItem('calendarVersion');
     location.reload();
 }
 
 // Debug-Info in der Konsole
-console.log('🎄 Systemischer Adventskalender geladen');
+console.log('🎄 Systemischer Adventskalender 2025 geladen');
 console.log('Aktuelle Zeit:', new Date().toLocaleString('de-DE'));
 console.log('Bereits geöffnete Türchen:', JSON.parse(localStorage.getItem('openedDoors') || '[]'));
 
