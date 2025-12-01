@@ -268,6 +268,33 @@ h1 {
     margin-bottom: 8px;
 }
 
+footer {
+    text-align: center;
+    padding: 20px 15px;
+    margin-top: 30px;
+    background: rgba(253, 248, 243, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.75rem;
+    color: var(--dark-text);
+    line-height: 1.6;
+}
+
+footer a {
+    color: var(--deep-red);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+footer a:hover,
+footer a:active {
+    color: var(--warm-red);
+    text-decoration: underline;
+}
+
 /* Tablet Landscape */
 @media (min-width: 600px) and (max-width: 900px) {
     .calendar-grid {
@@ -290,6 +317,10 @@ h1 {
     
     .door-title {
         font-size: 0.75rem;
+    }
+    
+    footer {
+        font-size: 0.85rem;
     }
 }
 
@@ -374,6 +405,12 @@ h1 {
     .close:hover {
         color: var(--warm-red);
     }
+    
+    footer {
+        max-width: 1200px;
+        font-size: 0.9rem;
+        margin-top: 40px;
+    }
 }
 
 /* Sehr kleine Smartphones */
@@ -401,6 +438,11 @@ h1 {
     .calendar-grid {
         gap: 8px;
     }
+    
+    footer {
+        font-size: 0.7rem;
+        padding: 15px 10px;
+    }
 }
 </style>
 </head>
@@ -411,6 +453,15 @@ h1 {
     </header>
 
     <div class="calendar-grid" id="calendarGrid"></div>
+
+    <footer>
+        <p>Das ist ein Kalender von Monika & Thomas aus der KIserei</p>
+        <p>
+            <a href="https://www.kieserei.de/" target="_blank" rel="noopener noreferrer">www.kieserei.de</a> · 
+            <a href="https://linkedin.com/in/monika-stumpf-b58a94165" target="_blank" rel="noopener noreferrer">linkedin.com/in/monika-stumpf-b58a94165</a> · 
+            <a href="https://linkedin.com/in/kieserei" target="_blank" rel="noopener noreferrer">linkedin.com/in/kieserei</a>
+        </p>
+    </footer>
 
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -869,7 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
         markDoorAsOpened(dayData.day);
         modalBody.innerHTML = dayData.content;
         modal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Verhindere Scrollen im Hintergrund
+        document.body.style.overflow = 'hidden';
     }
 
     function showLockedMessage(dayData) {
@@ -884,7 +935,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function closeModal() {
         modal.style.display = 'none';
-        document.body.style.overflow = ''; // Erlaube wieder Scrollen
+        document.body.style.overflow = '';
         location.reload();
     }
 });
